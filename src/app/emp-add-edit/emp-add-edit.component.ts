@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { EmployeeService } from '../services/employee.service';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-emp-add-edit',
@@ -16,8 +18,8 @@ export class EmpAddEditComponent {
     'Post Graduate',
   ];
 
-  constructor (private fb: FormBuilder) {
-    this.empForm = this.fb.group({
+  constructor(private _fb: FormBuilder, private _empService: EmployeeService, private _dialogRef: MatDialogRef<EmpAddEditComponent>) {
+    this.empForm = this._fb.group({
       firstName: '',
       lastName: '',
       email: '',
@@ -31,8 +33,16 @@ export class EmpAddEditComponent {
   }
 
   onFormSubmit() {
-    if(this.empForm.valid) {
-      console.log(this.empForm.value)
+    if (this.empForm.valid) {
+      this._empService.addEmployee(this.empForm.value).subscribe({
+        next: (val: any) => {
+          alert('Employee added successfully');
+          this._dialogRef.close();
+        },
+        error: (err: any) => {
+          console.error(err)
+        }
+      })
     }
   }
 }
