@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { EmployeeService } from '../services/employee.service';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-emp-add-edit',
@@ -18,7 +18,7 @@ export class EmpAddEditComponent {
     'Post Graduate',
   ];
 
-  constructor(private _fb: FormBuilder, private _empService: EmployeeService, private _dialogRef: MatDialogRef<EmpAddEditComponent>) {
+  constructor(private _fb: FormBuilder, private _empService: EmployeeService, private _dialogRef: MatDialogRef<EmpAddEditComponent>, @Inject(MAT_DIALOG_DATA) public data: any,) {
     this.empForm = this._fb.group({
       firstName: '',
       lastName: '',
@@ -30,6 +30,10 @@ export class EmpAddEditComponent {
       experience: '',
       package: '',
     })
+  }
+
+  ngOnInit(): void {
+    this.empForm.patchValue(this.data);
   }
 
   onFormSubmit() {
