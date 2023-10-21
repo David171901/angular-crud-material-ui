@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
     this.getEmployeeList()
   }
 
-  openAddEditEmpForm() {
+  openAddEmpForm() {
     const dialogRef = this._dialog.open(EmpAddEditComponent);
     dialogRef.afterClosed().subscribe({
       next: (val) => {

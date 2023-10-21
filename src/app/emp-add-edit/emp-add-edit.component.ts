@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { EmployeeService } from '../services/employee.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { CoreService } from '../core/core.service';
 
 @Component({
   selector: 'app-emp-add-edit',
@@ -18,7 +19,7 @@ export class EmpAddEditComponent {
     'Post Graduate',
   ];
 
-  constructor(private _fb: FormBuilder, private _empService: EmployeeService, private _dialogRef: MatDialogRef<EmpAddEditComponent>, @Inject(MAT_DIALOG_DATA) public data: any,) {
+  constructor(private _fb: FormBuilder, private _empService: EmployeeService, private _dialogRef: MatDialogRef<EmpAddEditComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private _coreService: CoreService) {
     this.empForm = this._fb.group({
       firstName: '',
       lastName: '',
@@ -38,15 +39,29 @@ export class EmpAddEditComponent {
 
   onFormSubmit() {
     if (this.empForm.valid) {
-      this._empService.addEmployee(this.empForm.value).subscribe({
-        next: (val: any) => {
-          alert('Employee added successfully');
-          this._dialogRef.close(true);
-        },
-        error: (err: any) => {
-          console.error(err)
-        }
-      })
+      if (this.data) {
+        this._empService
+          .updateEmployee(this.data.id, this.empForm.value)
+          .subscribe({
+            next: (val: any) => {
+              this._coreService.openSnackBar('Employee detail updated!');
+              this._dialogRef.close(true);
+            },
+            error: (err: any) => {
+              console.error(err);
+            },
+          });
+      } else {
+        this._empService.addEmployee(this.empForm.value).subscribe({
+          next: (val: any) => {
+            this._coreService.openSnackBar('Employee added successfully');
+            this._dialogRef.close(true);
+          },
+          error: (err: any) => {
+            console.error(err);
+          },
+        });
+      }
     }
   }
 }
